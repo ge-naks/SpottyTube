@@ -1,1 +1,1 @@
-print("ezdubs")
+print("nabhan is retarded")

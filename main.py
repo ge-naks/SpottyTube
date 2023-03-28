@@ -10,10 +10,17 @@ artist_name = 'spotify:artist:36QJpDe2go2KgaRleHCDTp'
 spotify = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials())
 results = spotify.artist_top_tracks(artist_name)
 
-playlist_id = 'spotify:playlist:013wGmqopEBhV6hPKGAgV0?si=1ada76a979aa486c'
+playlist_id = 'S1W9pkB6FibMV7N6JhUvDfu'
 username = 'drypdrop'
 
-playlist = spotify.user_playlist(username, playlist_id)
+results = spotify.playlist_tracks(playlist_id)
+tracks = results['items']
+while results['next']:
+    results = spotify.next(results)
+    tracks.extend(results['items'])
 
-playlist_name = playlist['name']
-print(f"Playlist name: {playlist_name}")
+for track in tracks:
+    track_name = track['track']['name']
+    artist_name = track['track']['artists'][0]['name']
+    album_name = track['track']['album']['name']
+    print(f"{track_name} by {artist_name} from the album {album_name}")

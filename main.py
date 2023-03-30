@@ -5,18 +5,18 @@ import os
 os.environ['SPOTIPY_CLIENT_ID'] = 'f57033e4039647999c11f6bd7b026af8'
 os.environ['SPOTIPY_CLIENT_SECRET'] = '339191ccaa2f4f7eb450a8ff4aabc04c'
 
-artist_name = 'spotify:artist:36QJpDe2go2KgaRleHCDTp'
-
+# sets up spotify API client
 spotify = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials())
-results = spotify.artist_top_tracks(artist_name)
 
-playlist_id = '37i9dQZF1DXcBWIGoYBM5M'
+# insert the spotify playlist ID here and the username of the account
+spotify_playlist_id = '72yaYysCp8xkoxwc639Sj0'
 username = 'drypdrop'
 
-results = spotify.playlist_tracks(playlist_id)
+# gets each track from the playlist
+results = spotify.playlist_tracks(spotify_playlist_id)
 tracks = results['items']
 
-playlist = spotify.user_playlist(username, playlist_id)
+playlist = spotify.user_playlist(username, spotify_playlist_id)
 playlist_name = playlist['name']
 print(f"Playlist name: {playlist_name}")
 
@@ -24,15 +24,7 @@ while results['next']:
     results = spotify.next(results)
     tracks.extend(results['items'])
 
-for track in tracks:
-    track_name = track['track']['name']
-    artist_name = track['track']['artists'][0]['name']
-    album_name = track['track']['album']['name']
-    print(f"{track_name} - track - {artist_name} - artist - {album_name} - album")
-
-
-# youtube api stuffz
-
+# youtube api stuff
 import os
 import google_auth_oauthlib.flow
 import googleapiclient.discovery
@@ -42,14 +34,16 @@ from google.oauth2.credentials import Credentials
 # Set up the OAuth credentials
 scopes = ["https://www.googleapis.com/auth/youtube.force-ssl"]
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
-os.environ['YOUTUBE_CLIENT_ID'] = '301957924875-g9vsn9741dgdnjv8ftucon2lolnjuv1e.apps.googleusercontent.com'
-os.environ['YOUTUBE_CLIENT_SECRET'] = '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'
+os.environ['YOUTUBE_CLIENT_ID'] = '301957924875-udcdh5disglkf3nmobjga0q3oqso49av.apps.googleusercontent.com'
+os.environ['YOUTUBE_CLIENT_SECRET'] = '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'
 
 # Create flow object and check for saved credentials
 flow = google_auth_oauthlib.flow.InstalledAppFlow.from_client_secrets_file(
     "/College/Year 2022-2023/cs projects/Uski/client_secret.json", scopes
 )
 creds = None
+
+# if token is not found, user is prompted to provide authorization
 if os.path.exists('token.json'):
     creds = Credentials.from_authorized_user_file('token.json', scopes)
 else:
@@ -80,27 +74,34 @@ response = youtube.playlists().insert(
 ).execute()
 
 # Get the ID of the new playlist
-playlist_id = response['id']
+youtube_playlist_id = response['id']
 
-# Add a video to the playlist
-video_id = "vtZtb9Ji_9A"
+# Add songs to the playlist
+for track in tracks:
+    # Search for the song on YouTube
+    query = f"{track['track']['name']} {track['track']['artists'][0]['name']} official video"
+    try:
+        search_response = youtube.search().list(
+            q=query,
+            part="id",
+            maxResults=1,
+            type="video"
+        ).execute()
 
-request_body = {
-    "snippet": {
-        "playlistId": playlist_id,
-        "resourceId": {
-            "kind": "youtube#video",
-            "videoId": video_id
+# Extract the video ID from the search response
+        video_id = search_response['items'][0]['id']['videoId']
+        request_body = {
+            "snippet": {
+                "playlistId": youtube_playlist_id,
+                "resourceId": {
+                    "kind": "youtube#video",
+                    "videoId": video_id
+                }
+            }
         }
-    }
-}
-
-response = youtube.playlistItems().insert(
-    part="snippet",
-    body=request_body
-).execute()
-
-# Print the response to confirm that the video was added to the playlist
- # print(response)
-
- # hiding response rn cuz it shows in terminal, remove comment if you wanna see in terminal ^^^
+        youtube.playlistItems().insert(
+            part="snippet",
+            body=request_body
+        ).execute()
+    except Exception as e:
+        print(f"Error adding song {track['track']['name']} to playlist: {e}")

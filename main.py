@@ -57,7 +57,7 @@ else:
 youtube = googleapiclient.discovery.build("youtube", "v3", credentials=creds)
 
 # Create a new playlist
-playlist_title = "Uski Test Playlist 2"
+playlist_title = "Uski Test Playlist"
 request_body = {
     "snippet": {
         "title": playlist_title,
@@ -106,3 +106,6 @@ for track in tracks:
     # If the song does not show up on YouTube search, return an error in the console
     except Exception as e:
         print(f"Error adding song {track['track']['name']} to playlist: {e}")
+
+
+# Two Successful runs - 1,100 queries used out of 10,000 daily limit (two playlists made, approx. 10 playlists max per day)

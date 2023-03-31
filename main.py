@@ -9,7 +9,7 @@ os.environ['SPOTIPY_CLIENT_SECRET'] = '339191ccaa2f4f7eb450a8ff4aabc04c'
 spotify = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials())
 
 # insert the spotify playlist ID here and the username of the account
-spotify_playlist_id = '72yaYysCp8xkoxwc639Sj0'
+spotify_playlist_id = '013wGmqopEBhV6hPKGAgV0'
 username = 'drypdrop'
 
 # gets each track from the playlist
@@ -57,7 +57,7 @@ else:
 youtube = googleapiclient.discovery.build("youtube", "v3", credentials=creds)
 
 # Create a new playlist
-playlist_title = "Uski Test Playlist"
+playlist_title = "Uski Test Playlist 2"
 request_body = {
     "snippet": {
         "title": playlist_title,
@@ -103,5 +103,6 @@ for track in tracks:
             part="snippet",
             body=request_body
         ).execute()
+    # If the song does not show up on YouTube search, return an error in the console
     except Exception as e:
         print(f"Error adding song {track['track']['name']} to playlist: {e}")

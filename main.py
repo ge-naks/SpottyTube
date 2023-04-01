@@ -8,8 +8,11 @@ os.environ['SPOTIPY_CLIENT_SECRET'] = '339191ccaa2f4f7eb450a8ff4aabc04c'
 # sets up spotify API client
 spotify = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials())
 
+with open('playlist_id.txt', 'r') as f:
+    playlist_id_from_file = f.readline().strip()
+
 # insert the spotify playlist ID here and the username of the account
-spotify_playlist_id = '013wGmqopEBhV6hPKGAgV0'
+spotify_playlist_id = playlist_id_from_file
 username = 'drypdrop'
 
 # gets each track from the playlist
@@ -34,8 +37,8 @@ from google.oauth2.credentials import Credentials
 # Set up the OAuth credentials
 scopes = ["https://www.googleapis.com/auth/youtube.force-ssl"]
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
-os.environ['YOUTUBE_CLIENT_ID'] = '301957924875-udcdh5disglkf3nmobjga0q3oqso49av.apps.googleusercontent.com'
-os.environ['YOUTUBE_CLIENT_SECRET'] = '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'
+os.environ['YOUTUBE_CLIENT_ID'] = '106612844195-qgjmqc0bqa2ns16aqovsuh119udhvk6k.apps.googleusercontent.com'
+os.environ['YOUTUBE_CLIENT_SECRET'] = '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'
 
 # Create flow object and check for saved credentials
 flow = google_auth_oauthlib.flow.InstalledAppFlow.from_client_secrets_file(
@@ -89,13 +92,12 @@ for track in tracks:
         ).execute()
 
 # Extract the video ID from the search response
-        video_id = search_response['items'][0]['id']['videoId']
         request_body = {
             "snippet": {
                 "playlistId": youtube_playlist_id,
                 "resourceId": {
                     "kind": "youtube#video",
-                    "videoId": video_id
+                    "videoId": search_response['items'][0]['id']['videoId']
                 }
             }
         }

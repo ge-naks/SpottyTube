@@ -1,9 +1,10 @@
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QPushButton
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QPushButton, QLineEdit
 from PyQt5.QtCore import Qt, pyqtSlot
 from PyQt5.QtGui import *
 from PyQt5.QtGui import QIcon, QColor, QPixmap
 from PyQt5 import QtCore
 import sys
+import subprocess
 
 class MainWindow(QWidget):
     def __init__(self):
@@ -35,6 +36,18 @@ class MainWindow(QWidget):
         layout = QVBoxLayout()
         layout.addWidget(label)
 
+        # Create a line edit widget for the user to enter a Spotify link
+        self.spotify_link_edit = QLineEdit()
+        layout.addWidget(self.spotify_link_edit)
+
+        # Create a button that prints the text in the line edit to the console
+        button = QPushButton('Enter', self)
+        button.setToolTip('Click to get the Spotify link')
+        button.setFont(QFont('Arial', 10, QFont.Bold))
+        button.setStyleSheet("color: rgb(255, 255, 255);")
+        button.clicked.connect(self.get_spotify_link)
+        layout.addWidget(button)
+
         # Set the main layout for the window
         self.setLayout(layout)
 
@@ -65,6 +78,29 @@ class MainWindow(QWidget):
         # scaling the image
         scaled_pixmap = pixmap.scaled(272, 140, QtCore.Qt.KeepAspectRatio) # aspect ratio is kept and image can be shrunk or increased
         newLabel.setPixmap(scaled_pixmap)
+
+        create_playlist_button = QPushButton('Create Playlist', self)
+        create_playlist_button.setGeometry(100, 220, 200, 30)
+        create_playlist_button.clicked.connect(self.create_playlist)
+
+    gui_playlist_id = None
+
+    @pyqtSlot()
+    def get_spotify_link(self):
+        global gui_playlist_id
+        # Get the text in the Spotify link edit and print it to the console
+        spotify_link = self.spotify_link_edit.text()
+        # Gets the playlist ID from the link and storing it into playlist_id
+        gui_playlist_id = spotify_link.split('/')[-1].split('?')[0]
+        print(f'Playlist ID: {gui_playlist_id}')
+
+        with open('playlist_id.txt', 'w') as f:
+            if gui_playlist_id is not None:
+                f.write(gui_playlist_id)
+
+    def create_playlist(self):
+        # Run the main.py file using the subprocess module
+        subprocess.run(["python", "main.py"])
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

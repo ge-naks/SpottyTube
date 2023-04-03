@@ -24,17 +24,22 @@ class MainWindow(QWidget):
 
         # Create a label
         label = QLabel('Uski - Spotify to YouTube Playlist Migrator')
+        text = QLabel('Enter the link to the Spotify Playlist: ')
 
         # Setting the font
         label.setFont(QFont('Arial', 10, QFont.Bold))
         label.setStyleSheet("color: rgb(255, 255, 255);")
+        text.setFont(QFont('Arial', 10))
+        text.setStyleSheet("color: rgb(255, 255, 255);")
 
         # Align the label to the top center of the window
         label.setAlignment(Qt.AlignTop | Qt.AlignHCenter)
+        text.setAlignment(Qt.AlignBottom)
 
         # Create a layout and add the label to it
         layout = QVBoxLayout()
         layout.addWidget(label)
+        layout.addWidget(text)
 
         # Create a line edit widget for the user to enter a Spotify link
         self.spotify_link_edit = QLineEdit()
@@ -54,15 +59,8 @@ class MainWindow(QWidget):
         # set the size and position of the window (left, top, width, height)
         # first two params are x,y coords of top left of box
         self.setGeometry(500, 100, 800, 600)
-
-        # adding a button :)
-        button = QPushButton('Test Button', self)
-        button.setToolTip('This is an example button')
-        button.setFont(QFont('Arial', 10, QFont.Bold))
-        button.setStyleSheet("color: rgb(255, 255, 255);")
-        # parameters x and y coordinataes
-        button.move(320,450)
-        button.resize(150, 50)
+        self.setMaximumWidth(800)
+        self.setMaximumHeight(600)
 
         # importing a picture
         newLabel = QLabel(self)
@@ -80,7 +78,9 @@ class MainWindow(QWidget):
         newLabel.setPixmap(scaled_pixmap)
 
         create_playlist_button = QPushButton('Create Playlist', self)
-        create_playlist_button.setGeometry(100, 220, 200, 30)
+        create_playlist_button.setGeometry(300, 470, 200, 30)
+        create_playlist_button.setFont(QFont('Arial', 10, QFont.Bold))
+        create_playlist_button.setStyleSheet("color: rgb(255, 255, 255);")
         create_playlist_button.clicked.connect(self.create_playlist)
 
     gui_playlist_id = None

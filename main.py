@@ -27,7 +27,7 @@ while results['next']:
     results = spotify.next(results)
     tracks.extend(results['items'])
 
-# youtube api stuff
+# youtube api import
 import os
 import google_auth_oauthlib.flow
 import googleapiclient.discovery
